@@ -2,25 +2,28 @@ from django.db import models
 import string
 import random
 
+MAX_LENGTH = 6
+
 
 class ShortenedURL(models.Model):
     original_url = models.URLField()
-    short_token = models.CharField(max_length=6, unique=True)
-    clicks = models.IntegerField(default=0)
+    short_token = models.CharField(max_length=MAX_LENGTH, unique=True)
+    clicks = models.PositiveIntegerField(default=0)
 
-    def save(self, *args, **kwargs):
-        if not self.short_token:
-            self.short_token = self.generate_token()
-        super().save(*args, **kwargs)
-
-    def generate_token(self):
+    @classmethod
+    def generate_token(cls):
         chars = string.ascii_letters + string.digits
 
         while True:
-            token = ''.join(random.choice(chars) for _ in range(6))
-            if not ShortenedURL.objects.filter(short_token=token).exists():
+            token = ''.join(random.choice(chars) for _ in range(MAX_LENGTH))
+            if not cls.objects.filter(short_token=token).exists():
                 return token
 
     def increment_clicks(self):
-        self.clicks += 1
+        self.clicks = models.F('clicks') + 1
         self.save()
+
+    @classmethod
+    def custom_create(cls, url):
+        short_token = cls.generate_token()
+        return cls.objects.create(original_url=url, short_token=short_token)
