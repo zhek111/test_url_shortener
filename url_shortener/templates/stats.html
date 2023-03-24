@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Статистика переходов по коротким ссылкам</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Оригинальный URL</th>
+        <th>Короткая ссылка</th>
+        <th>Количество переходов</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for url in urls %}
+        <tr>
+          <td>{{ url.original_url }}</td>
+          <td>{{ request.scheme }}://{{ request.get_host }}{% url 'redirect_url' token=url.short_token %}</td>
+          <td>{{ url.clicks }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Ваша короткая ссылка:</h1>
+  <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'redirect_url' token=shortened_url.short_token %}">
+    {{ request.scheme }}://{{ request.get_host }}{% url 'redirect_url' token=shortened_url.short_token %}
+  </a>
+{% endblock %}
