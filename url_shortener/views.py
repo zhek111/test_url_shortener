@@ -4,9 +4,8 @@ from .models import ShortenedURL
 
 def shorten_url(request):
     if request.method == 'POST':
-        original_url = request.POST['url']
-        shortened_url = ShortenedURL(original_url=original_url)
-        shortened_url.save()
+        original_url = request.POST.get('url')
+        shortened_url = ShortenedURL.custom_create(original_url)
         return render(request, 'shortened_url.html',
                       {'shortened_url': shortened_url})
 
